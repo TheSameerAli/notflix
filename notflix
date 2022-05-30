@@ -1,6 +1,23 @@
-#!/bin/sh
+#!/bin/python3
 
-query=$(printf '%s' "$*" | tr ' ' '+' )
-movie=$(curl -s https://1337x.wtf/search/$query/1/ | grep -Eo "torrent\/[0-9]{7}\/[a-zA-Z0-9?%-]*/" | head -n 1)
-magnet=$(curl -s https://1337x.wtf/$movie | grep -Po "magnet:\?xt=urn:btih:[a-zA-Z0-9]*" | head -n 1)
-peerflix -l -k $magnet
+import os
+import requests
+import sys
+
+def get_movies(movie_name): 
+    movie_name = movie_name.replace(" ", "+")
+    uri = "https://pirate-proxy.club/newapi/q.php?q="+movie_name+"&cat="
+    return requests.get(uri).json()
+
+
+def run():
+    movies = get_movies(sys.argv[1])
+    ct = 1
+    for movie in movies:
+        print(str(ct) + ") " + movie['name'])
+        ct += 1
+    movie_idx = int(input("Choose a movie [1-...] :>")) - 1
+    magnet = "magnet:?xt=urn:btih:" + movies[movie_idx]['info_hash'] + "&dn="+ movies[movie_idx]['name'] + "&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce&tr=udp%3A%2F%2F9.rarbg.to%3A2710%2Fannounce&tr=udp%3A%2F%2F9.rarbg.me%3A2780%2Fannounce&tr=udp%3A%2F%2F9.rarbg.to%3A2730%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=http%3A%2F%2Fp4p.arenabg.com%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Ftracker.tiny-vps.com%3A6969%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce"
+    os.system('peerflix -k "' + magnet + '"')
+
+run()
