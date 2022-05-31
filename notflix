@@ -11,7 +11,9 @@ def get_movies(movie_name):
 
 
 def run():
-    movies = get_movies(sys.argv[1])
+    args = sys.argv
+    del args[0]
+    movies = get_movies(" ".join(args))
     movies.reverse()
     ct = len(movies)
     for movie in movies:
@@ -19,6 +21,6 @@ def run():
         ct -= 1
     movie_idx = int(input("Choose a movie [1-...] :>")) * -1
     magnet = "magnet:?xt=urn:btih:" + movies[movie_idx]['info_hash'] + "&dn="+ movies[movie_idx]['name'] + "&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce&tr=udp%3A%2F%2F9.rarbg.to%3A2710%2Fannounce&tr=udp%3A%2F%2F9.rarbg.me%3A2780%2Fannounce&tr=udp%3A%2F%2F9.rarbg.to%3A2730%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=http%3A%2F%2Fp4p.arenabg.com%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Ftracker.tiny-vps.com%3A6969%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce"
-    os.system('peerflix -k "' + magnet + '" --list')
+    os.system('peerflix -v "' + magnet + '" --list')
 
 run()
